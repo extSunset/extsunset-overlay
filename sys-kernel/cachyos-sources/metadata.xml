@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+  <maintainer type="person">
+    <email>seryogaleshii@protonmail.com</email>
+    <name>Seryoga Leshii</name>
+  </maintainer>
+  <use>
+    <flag name="bmq"> Use BMQ (BitMap Queue CPU scheduler) as CPU scheduler </flag>
+    <flag name="pds"> Use PDS (Priority and Deadline based Skip list multiple queue CPU scheduler) as CPU scheduler </flag>
+    <flag name="cfs"> Use CFS (Completely Fair Scheduler) as CPU scheduler </flag>
+    <flag name="bore"> Use BORE (Burst-Oriented Response Enhancer) as CPU scheduler </flag>
+    <flag name="eevdf"> Use EEVDF (Earliest Eligible Virtual Deadline First Scheduler) with BORE as CPU scheduler </flag>
+    <flag name="tt"> Use TT (Task Type Scheduler) as CPU scheduler </flag>
+    <flag name="hardened"> Apply hardened kernel configuration </flag>
+    <flag name="tuned-bore"> Apply some suggested BORE sysctl values from the BORE developer </flag>
+    <flag name="hardened-bore"> Apply some hardening patches to BORE and kernel itself </flag>
+    <flag name="cachy"> Apply some tweaks from CachyOS </flag>
+    <flag name="numa"> Enable NUMA support </flag>
+    <flag name="bbr2"> Apply BBR2 patchset and enable it by default </flag>
+    <flag name="lru"> Enable LRU </flag>
+    <flag name="latency-nice"> Enable LATENCY NICE. Latency nice is a approach to sets latency-nice as a per-task attribute. It can improve the latency of applications similar to sched_nice, but focused on the latency. </flag>
+    <flag name="vma"> Enable per-VMA locking </flag>
+    <flag name="damon"> Enable DAMON </flag>
+    <flag name="lrng"> Apply LRNG patchset, enable and configure it </flag>
+    <flag name="debug"> Enable most of basic kernel debbuging features </flag>
+    <flag name="gcc-lto"> EXPERIMENTAL: Really experimental LTO implementation for GCC. This can improve the performance of the kernel. The performance difference is currently negligible and DEBUG and BTF needs to be disabled, otherwise the compilation is failing. The Kernel is bigger with GCC LTO due to more inlining. </flag>
+    <flag name="bcachefs"> Apply bcachefs patchset </flag>
+    <flag name="clang-pgo"> EXPERIMENTAL: Clang PGO implementation for the Linux kernel </flag>
+    <flag name="movable-bar"> EXPERIMENTAL: Implementation of movable BARs for Linux kernel. To increase the probability of finding room for BARs of hotpluggable devices, kernel asks drivers to free up used BARs so they can be moved to make room for new BARs. </flag>
+    <flag name="aufs"> EXPERIMENTAL: Apply AUFS (Advanced multi-layered Unification Filesystem) patchset </flag>
+    <flag name="rt"> EXPERIMENTAL: Apply real-time kernel patchset </flag>
+    <flag name="zblock"> EXPERIMENTAL: Bulid with zblock - new allocator for use via zpool API </flag>
+    <flag name="spadfs"> EXPERIMENTAL: Apply SpadFS patchset </flag>
+    <flag name="sched-task-classes"> EXPERIMENTAL: Introduce classes of tasks for load balance </flag>
+    <flag name="sched-avoid-unnecessary-migrations"> EXPERIMENTAL: Avoid unnecessary migrations within SMT domains </flag>
+    <flag name="high-hz"> EXPERIMENTAL: Apply high-hz TT patchset. Makes improvements to the TT scheduler for high frequency operation. Adds support for more optimal HZ values for TT: 833 and 1633. </flag>
+    <flag name="thp-shrinker"> EXPERIMENTAL: Apply THP Shrinker patchset </flag>
+    <flag name="resizable-bar"> EXPERIMENTAL: Build with resizable BAR implementation in kernel itself </flag>
+  </use>
+</pkgmetadata>

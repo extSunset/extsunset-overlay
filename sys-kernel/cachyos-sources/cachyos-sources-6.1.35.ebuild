@@ -101,10 +101,6 @@ DEPEND="virtual/linux-sources"
 RDEPEND="${DEPEND}"
 BDEPEND=""
 
-pkg_setup() {
-	detect_version
-}
-
 src_prepare() {
 	default
 
@@ -197,6 +193,8 @@ src_prepare() {
 }
 
 src_configure() {
+	default
+
 	# Applying kernel configuration depending on the selected scheduler.
 	active_sched = usev hardened || usev cfs || usev bore || usev tt || usev pds || usev bmq
 	cp "${DISTDIR}/config-${KV_FULL}-${active_sched}"  "${S}/.config"
@@ -208,16 +206,16 @@ src_configure() {
 
 	if use pds; then
 		"${S}/scripts/config" -e SCHED_ALT \
-									-d SCHED_BMQ \
-									-e SCHED_PDS \
-									-e PSI_DEFAULT_DISABLED
+							  -d SCHED_BMQ \
+							  -e SCHED_PDS \
+							  -e PSI_DEFAULT_DISABLED
 	fi
 
 	if use bmq; then
 		"${S}/scripts/config" -e SCHED_ALT \
-									-e SCHED_BMQ \
-									-d SCHED_PDS \
-									-e PSI_DEFAULT_DISABLED
+							  -e SCHED_BMQ \
+							  -d SCHED_PDS \
+							  -e PSI_DEFAULT_DISABLED
 	fi
 
 	if use tt; then
@@ -257,148 +255,148 @@ src_configure() {
 	# Disabling NUMA support.
 	if ! use numa; then
 		"${S}/scripts/config" -d NUMA \
-									-d AMD_NUMA \
-									-d X86_64_ACPI_NUMA \
-									-d NODES_SPAN_OTHER_NODES \
-									-d NUMA_EMU \
-									-d USE_PERCPU_NUMA_NODE_ID \
-									-d ACPI_NUMA \
-									-d ARCH_SUPPORTS_NUMA_BALANCING \
-									-d NODES_SHIFT \
-									-u NODES_SHIFT \
-									-d NEED_MULTIPLE_NODES \
-									-d NUMA_BALANCING \
-									-d NUMA_BALANCING_DEFAULT_ENABLED
+							  -d AMD_NUMA \
+							  -d X86_64_ACPI_NUMA \
+							  -d NODES_SPAN_OTHER_NODES \
+							  -d NUMA_EMU \
+							  -d USE_PERCPU_NUMA_NODE_ID \
+							  -d ACPI_NUMA \
+							  -d ARCH_SUPPORTS_NUMA_BALANCING \
+							  -d NODES_SHIFT \
+							  -u NODES_SHIFT \
+							  -d NEED_MULTIPLE_NODES \
+							  -d NUMA_BALANCING \
+							  -d NUMA_BALANCING_DEFAULT_ENABLED
 	fi
 
 	# Enabling BBR2
 	if use bbr2; then
 		"${S}/scripts/config" -m TCP_CONG_CUBIC \
-									-d DEFAULT_CUBIC \
-									-e TCP_CONG_BBR2 \
-									-e DEFAULT_BBR2 \
-									--set-str DEFAULT_TCP_CONG bbr2
+							  -d DEFAULT_CUBIC \
+							  -e TCP_CONG_BBR2 \
+							  -e DEFAULT_BBR2 \
+							  --set-str DEFAULT_TCP_CONG bbr2
 
 		# BBR2 does not work together with FQ_CODEL, so the latter must be disabled
 		"${S}/scripts/config" -m NET_SCH_FQ_CODEL \
-			-e NET_SCH_FQ \
-			-d DEFAULT_FQ_CODEL \
-			-e DEFAULT_FQ \
-			--set-str DEFAULT_NET_SCH fq
+							  -e NET_SCH_FQ \
+							  -d DEFAULT_FQ_CODEL \
+							  -e DEFAULT_FQ \
+							  --set-str DEFAULT_NET_SCH fq
 	fi
 
 	# Disabling LRU
 	if ! use lru; then
 		"${S}/scripts/config" -d LRU_GEN \
-									-d LRU_GEN_ENABLED \
-									-d LRU_GEN_STATS
+							  -d LRU_GEN_ENABLED \
+							  -d LRU_GEN_STATS
 	fi
 
 	# Enabling per-VMA lock
 	if use vma; then
 		"${S}/scripts/config" -e PER_VMA_LOCK \
-									-d PER_VMA_LOCK_STATS
+							  -d PER_VMA_LOCK_STATS
 	fi
 
 	# Enabling DAMON
 	if use damon; then
 		"${S}/scripts/config" -e DAMON \
-									-e DAMON_VADDR \
-									-e DAMON_DBGFS \
-									-e DAMON_SYSFS \
-									-e DAMON_PADDR \
-									-e DAMON_RECLAIM \
-									-e DAMON_LRU_SORT
+							  -e DAMON_VADDR \
+							  -e DAMON_DBGFS \
+							  -e DAMON_SYSFS \
+							  -e DAMON_PADDR \
+							  -e DAMON_RECLAIM \
+							  -e DAMON_LRU_SORT
 	fi
 
 	# Enabling and configuring LRNG
 	if use lrng; then
 		"${S}/scripts/config" -e LRNG \
-									-e LRNG_SHA256 \
-									-e LRNG_COMMON_DEV_IF \
-									-e LRNG_DRNG_ATOMIC \
-									-e LRNG_SYSCTL \
-									-e LRNG_RANDOM_IF \
-									-e LRNG_AIS2031_NTG1_SEEDING_STRATEGY \
-									-m LRNG_KCAPI_IF \
-									-m LRNG_HWRAND_IF \
-									-e LRNG_DEV_IF \
-									-e LRNG_RUNTIME_ES_CONFIG \
-									-e LRNG_IRQ_DFLT_TIMER_ES \
-									-d LRNG_SCHED_DFLT_TIMES_ES \
-									-e LRNG_TIMER_COMMON \
-									-d LRNG_COLLECTION_SIZE_256 \
-									-d LRNG_COLLECTION_SIZE_512 \
-									-e LRNG_COLLECTION_SIZE_1024 \
-									-d LRNG_COLLECTION_SIZE_2048 \
-									-d LRNG_COLLECTION_SIZE_4096 \
-									-d LRNG_COLLECTION_SIZE_8192 \
-									--set-val LRNG_COLLECTION_SIZE 1024 \
-									-e LRNG_HEALTH_TESTS \
-									--set-val LRNG_RCT_CUTOFF 31 \
-									--set-val LRNG_APT_CUTOFF 325 \
-									-e LRNG_IRQ \
-									-e LRNG_CONTINUOUS_COMPRESSION_ENABLED \
-									-d LRNG_CONTINUOUS_COMPRESSION_DISABLED \
-									-e LRNG_ENABLE_CONTINUOUS_COMPRESSION \
-									-e LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION \
-									--set-val LRNG_IRQ_ENTROPY_RATE 256 \
-									-e LRNG_JENT \
-									--set-val LRNG_JENT_ENTROPY_RATE 16 \
-									-e LRNG_CPU \
-									--set-val LRNG_CPU_FULL_ENT_MULTIPLIER 1 \
-									--set-val LRNG_CPU_ENTROPY_RATE 8 \
-									-e LRNG_SCHED \
-									--set-val LRNG_SCHED_ENTROPY_RATE 4294967295 \
-									-e LRNG_DRNG_CHACHA20 \
-									-m LRNG_DRBG \
-									-m LRNG_DRNG_KCAPI \
-									-e LRNG_SWITCH \
-									-e LRNG_SWITCH_HASH \
-									-m LRNG_HASH_KCAPI \
-									-e LRNG_SWITCH_DRNG \
-									-m LRNG_SWITCH_DRBG \
-									-m LRNG_SWITCH_DRNG_KCAPI \
-									-e LRNG_DFLT_DRNG_CHACHA20 \
-									-d LRNG_DFLT_DRNG_DRBG \
-									-d LRNG_DFLT_DRNG_KCAPI \
-									-e LRNG_TESTING_MENU \
-									-d LRNG_RAW_HIRES_ENTROPY \
-									-d LRNG_RAW_JIFFIES_ENTROPY \
-									-d LRNG_RAW_IRQ_ENTROPY \
-									-d LRNG_RAW_RETIP_ENTROPY \
-									-d LRNG_RAW_REGS_ENTROPY \
-									-d LRNG_RAW_ARRAY \
-									-d LRNG_IRQ_PERF \
-									-d LRNG_RAW_SCHED_HIRES_ENTROPY \
-									-d LRNG_RAW_SCHED_PID_ENTROPY \
-									-d LRNG_RAW_SCHED_START_TIME_ENTROPY \
-									-d LRNG_RAW_SCHED_NVCSW_ENTROPY \
-									-d LRNG_SCHED_PERF \
-									-d LRNG_ACVT_HASH \
-									-d LRNG_RUNTIME_MAX_WO_RESEED_CONFIG \
-									-d LRNG_TEST_CPU_ES_COMPRESSION \
-									-e LRNG_SELFTEST \
-									-d LRNG_SELFTEST_PANIC \
-									-d LRNG_RUNTIME_FORCE_SEEDING_DISABLE
+							  -e LRNG_SHA256 \
+							  -e LRNG_COMMON_DEV_IF \
+							  -e LRNG_DRNG_ATOMIC \
+							  -e LRNG_SYSCTL \
+							  -e LRNG_RANDOM_IF \
+							  -e LRNG_AIS2031_NTG1_SEEDING_STRATEGY \
+							  -m LRNG_KCAPI_IF \
+							  -m LRNG_HWRAND_IF \
+							  -e LRNG_DEV_IF \
+							  -e LRNG_RUNTIME_ES_CONFIG \
+							  -e LRNG_IRQ_DFLT_TIMER_ES \
+							  -d LRNG_SCHED_DFLT_TIMES_ES \
+							  -e LRNG_TIMER_COMMON \
+							  -d LRNG_COLLECTION_SIZE_256 \
+							  -d LRNG_COLLECTION_SIZE_512 \
+							  -e LRNG_COLLECTION_SIZE_1024 \
+							  -d LRNG_COLLECTION_SIZE_2048 \
+							  -d LRNG_COLLECTION_SIZE_4096 \
+							  -d LRNG_COLLECTION_SIZE_8192 \
+							  --set-val LRNG_COLLECTION_SIZE 1024 \
+							  -e LRNG_HEALTH_TESTS \
+							  --set-val LRNG_RCT_CUTOFF 31 \
+							  --set-val LRNG_APT_CUTOFF 325 \
+							  -e LRNG_IRQ \
+							  -e LRNG_CONTINUOUS_COMPRESSION_ENABLED \
+							  -d LRNG_CONTINUOUS_COMPRESSION_DISABLED \
+							  -e LRNG_ENABLE_CONTINUOUS_COMPRESSION \
+							  -e LRNG_SWITCHABLE_CONTINUOUS_COMPRESSION \
+							  --set-val LRNG_IRQ_ENTROPY_RATE 256 \
+							  -e LRNG_JENT \
+							  --set-val LRNG_JENT_ENTROPY_RATE 16 \
+							  -e LRNG_CPU \
+							  --set-val LRNG_CPU_FULL_ENT_MULTIPLIER 1 \
+							  --set-val LRNG_CPU_ENTROPY_RATE 8 \
+							  -e LRNG_SCHED \
+							  --set-val LRNG_SCHED_ENTROPY_RATE 4294967295 \
+							  -e LRNG_DRNG_CHACHA20 \
+							  -m LRNG_DRBG \
+							  -m LRNG_DRNG_KCAPI \
+							  -e LRNG_SWITCH \
+							  -e LRNG_SWITCH_HASH \
+							  -m LRNG_HASH_KCAPI \
+							  -e LRNG_SWITCH_DRNG \
+							  -m LRNG_SWITCH_DRBG \
+							  -m LRNG_SWITCH_DRNG_KCAPI \
+							  -e LRNG_DFLT_DRNG_CHACHA20 \
+							  -d LRNG_DFLT_DRNG_DRBG \
+							  -d LRNG_DFLT_DRNG_KCAPI \
+							  -e LRNG_TESTING_MENU \
+							  -d LRNG_RAW_HIRES_ENTROPY \
+							  -d LRNG_RAW_JIFFIES_ENTROPY \
+							  -d LRNG_RAW_IRQ_ENTROPY \
+							  -d LRNG_RAW_RETIP_ENTROPY \
+							  -d LRNG_RAW_REGS_ENTROPY \
+							  -d LRNG_RAW_ARRAY \
+							  -d LRNG_IRQ_PERF \
+							  -d LRNG_RAW_SCHED_HIRES_ENTROPY \
+							  -d LRNG_RAW_SCHED_PID_ENTROPY \
+							  -d LRNG_RAW_SCHED_START_TIME_ENTROPY \
+							  -d LRNG_RAW_SCHED_NVCSW_ENTROPY \
+							  -d LRNG_SCHED_PERF \
+							  -d LRNG_ACVT_HASH \
+							  -d LRNG_RUNTIME_MAX_WO_RESEED_CONFIG \
+							  -d LRNG_TEST_CPU_ES_COMPRESSION \
+							  -e LRNG_SELFTEST \
+							  -d LRNG_SELFTEST_PANIC \
+							  -d LRNG_RUNTIME_FORCE_SEEDING_DISABLE
 	fi
 
 	# Disabling most of basic debugging features
 	if ! use debug; then
 		"${S}/scripts/config" -d DEBUG_INFO \
-									-d DEBUG_INFO_BTF \
-									-d DEBUG_INFO_DWARF4 \
-									-d DEBUG_INFO_DWARF5 \
-									-d PAHOLE_HAS_SPLIT_BTF \
-									-d DEBUG_INFO_BTF_MODULES \
-									-d SLUB_DEBUG \
-									-d PM_DEBUG \
-									-d PM_ADVANCED_DEBUG \
-									-d PM_SLEEP_DEBUG \
-									-d ACPI_DEBUG \
-									-d SCHED_DEBUG \
-									-d LATENCYTOP \
-									-d DEBUG_PREEMT
+							  -d DEBUG_INFO_BTF \
+							  -d DEBUG_INFO_DWARF4 \
+							  -d DEBUG_INFO_DWARF5 \
+							  -d PAHOLE_HAS_SPLIT_BTF \
+							  -d DEBUG_INFO_BTF_MODULES \
+							  -d SLUB_DEBUG \
+							  -d PM_DEBUG \
+							  -d PM_ADVANCED_DEBUG \
+							  -d PM_SLEEP_DEBUG \
+							  -d ACPI_DEBUG \
+							  -d SCHED_DEBUG \
+							  -d LATENCYTOP \
+							  -d DEBUG_PREEMT
 	fi
 
 	"${S}/scripts/config" -e USER_NS

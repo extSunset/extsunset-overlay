@@ -27,7 +27,7 @@ SRC_URI="
 				   0001-Add-latency-priority-for-CFS-class-${KV_FULL}.patch )
 	bmq? (
 		${_patchsource}/sched/0001-prjc-cachy.patch -> 0001-prjc-cachy-${KV_FULL}.patch
-		${_configsource}/linux-cachyos-pds/config -> config-${KV_FULL}-bmq
+		${_configsource}/linux-cachyos-bmq/config -> config-${KV_FULL}-bmq
 	)
 	pds? (
 		${_patchsource}/sched/0001-prjc-cachy.patch -> 0001-prjc-cachy-${KV_FULL}.patch
@@ -82,7 +82,7 @@ SRC_URI="
 
 LICENSE="GPL-2"
 SLOT="lts"
-KEYWORDS="~amd64"
+KEYWORDS="amd64"
 EXPERIMENTAL_IUSE="clang-pgo movable-bar aufs rt zblock spadfs sched-task-classes sched-avoid-unnecessary-migrations high-hz thp-shrinker resizable-bar"
 IUSE="bore pds bmq tt cfs +cachy +numa +bbr2 +lru latency-nice vma damon lrng +debug gcc-lto bcachefs tuned-bore hardened-bore hardened ${EXPERIMENTAL_IUSE}"
 

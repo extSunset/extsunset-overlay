@@ -10,7 +10,8 @@
     <flag name="pds"> Use PDS (Priority and Deadline based Skip list multiple queue CPU scheduler) as CPU scheduler </flag>
     <flag name="cfs"> Use CFS (Completely Fair Scheduler) as CPU scheduler </flag>
     <flag name="bore"> Use BORE (Burst-Oriented Response Enhancer) as CPU scheduler </flag>
-    <flag name="eevdf"> Use EEVDF (Earliest Eligible Virtual Deadline First Scheduler) with BORE as CPU scheduler </flag>
+    <flag name="eevdf"> Use EEVDF (Earliest Eligible Virtual Deadline First Scheduler) as CPU scheduler </flag>
+    <flag name="eevdf-bore"> Use EEVDF (Earliest Eligible Virtual Deadline First Scheduler) with BORE as CPU scheduler </flag>
     <flag name="tt"> Use TT (Task Type Scheduler) as CPU scheduler </flag>
     <flag name="hardened"> Apply hardened kernel configuration </flag>
     <flag name="tuned-bore"> Apply some suggested BORE sysctl values from the BORE developer </flag>

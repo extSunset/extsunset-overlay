@@ -24,16 +24,20 @@ SRC_URI="
 	${_patchsource}/all/0001-cachyos-base-all.patch -> 0001-cachyos-base-all-${KV_FULL}.patch
 	eevdf? (
 		${_patchsource}/sched/0001-EEVDF.patch -> 0001-EEVDF-${KV_FULL}.patch
-		${_patchsource}/sched/0001-bore-eevdf.patch -> 0001-bore-eevdf-${KV_FULL}.patch
 		${_configsource}/linux-cachyos/config -> config-${KV_FULL}-eevdf
+	)
+	eevdf-bore? (
+		${_patchsource}/sched/0001-EEVDF.patch -> 0001-EEVDF-${KV_FULL}.patch
+		${_patchsource}/sched/0001-bore-eevdf.patch -> 0001-bore-eevdf-${KV_FULL}.patch
+		${_configsource}/linux-cachyos-eevdf/config -> config-${KV_FULL}-eevdf-bore
 	)
 	bmq? (
 		${_patchsource}/sched/0001-prjc-cachy.patch -> 0001-prjc-cachy-${KV_FULL}.patch
-		${_configsource}/linux-cachyos-pds/config -> config-${KV_FULL}-prjc
+		${_configsource}/linux-cachyos-bmq/config -> config-${KV_FULL}-bmq
 	)
 	pds? (
 		${_patchsource}/sched/0001-prjc-cachy.patch -> 0001-prjc-cachy-${KV_FULL}.patch
-		${_configsource}/linux-cachyos-pds/config -> config-${KV_FULL}-prjc
+		${_configsource}/linux-cachyos-pds/config -> config-${KV_FULL}-pds
 	)
 	tt? (
 		${_patchsource}/sched/0001-tt-cachy.patch -> 0001-tt-cachy-${KV_FULL}.patch
@@ -76,14 +80,14 @@ LICENSE="GPL-2"
 SLOT="stable"
 KEYWORDS="amd64"
 EXPERIMENTAL_IUSE="aufs high-hz rt spadfs sched-task-classes sched-avoid-unnecessary-migrations"
-IUSE="bore eevdf pds bmq tt cfs +cachy +numa +bbr2 +lru +vma damon lrng +debug gcc-lto bcachefs tuned-bore hardened ${EXPERIMENTAL_IUSE}"
+IUSE="bore eevdf eevdf-bore pds bmq tt cfs +cachy +numa +bbr2 +lru +vma damon lrng +debug gcc-lto bcachefs tuned-bore hardened ${EXPERIMENTAL_IUSE}"
 
 REQUIRED_USE="
-	^^ ( pds bmq bore cfs tt eevdf )
-	tuned-bore? ( bore )
+	^^ ( pds bmq bore cfs tt eevdf eevdf-bore )
+	tuned-bore? ( bore eevdf-bore )
 	gcc-lto? ( !debug )
-	sched-task-classes? ( ^^ ( cfs bore eevdf ) )
-	sched-avoid-unnecessary-migrations? ( ^^ ( cfs bore eevdf ) )
+	sched-task-classes? ( ^^ ( cfs bore eevdf eevdf-bore ) )
+	sched-avoid-unnecessary-migrations? ( ^^ ( cfs bore eevdf eevdf-bore ) )
 	high-hz? ( tt )
 "
 
@@ -96,9 +100,13 @@ src_prepare() {
 
 	eapply "${DISTDIR}/0001-cachyos-base-all-${KV_FULL}.patch"
 
-	if use eevdf; then
+	if use eevdf-bore; then
 		eapply "${DISTDIR}/0001-EEVDF-${KV_FULL}.patch"
 		eapply "${DISTDIR}/0001-bore-eevdf-${KV_FULL}.patch"
+	fi
+
+	if use eevdf; then
+		eapply "${DISTDIR}/0001-EEVDF-${KV_FULL}.patch"
 	fi
 
 	if use pds || use bmq; then
@@ -159,7 +167,7 @@ src_prepare() {
 
 src_configure() {
 	# Applying kernel configuration depending on the selected scheduler.
-	active_sched = usev hardened || usev cfs || usev bore || usev eevdf || usev tt || usev pds || usev bmq
+	active_sched = usev hardened || usev cfs || usev bore || usev eevdf || usev eevdf-bore || usev tt || usev pds || usev bmq
 	cp "${DISTDIR}/config-${KV_FULL}-${active_sched}"  "${S}/.config"
 
 	# Applying some tweaks from CachyOS.
